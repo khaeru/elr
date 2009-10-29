@@ -1,0 +1,6 @@
+Files:
+  elr -- the file that controls the look of ELR.
+  example -- an example issue of ELR, with three articles.
+  article-01 -- an example article, 3000 words long.
+  article-02, article-03 -- links to article-01 (i.e. copies).
+  lipsum-1000 -- 1000 words of sample 'lorem ipsum' filler text.
