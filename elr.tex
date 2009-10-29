@@ -7,8 +7,27 @@
 % geometry: page size and margins
 \usepackage[%
   a5paper,
-  margin=1cm%
+  headsep=5mm,%
+  includehead,%
+  includefoot,%
+  hmargin=10mm,%
+  vmargin=7mm,%
+  bindingoffset=5mm,%
   ]{geometry}
+% fancyhdr: page marks
+\usepackage{fancyhdr}
+  \pagestyle{fancy}
+  \fancyhf{}
+  \fancyhead[LE]{Engineering Leadership Review}
+  \fancyhead[RO]{vol.1 no.1 --- January 2010}
+  \fancyfoot[LE,RO]{[\thepage]}
+
+%% Article layout
+% titlesec: section titles
+\usepackage{titlesec}
+  \titleformat{\chapter}[display]
+    {}{}{0pt}{\bfseries\Large}
+  \titlespacing*{\chapter}{0pt}{10mm}{0pt}[20mm]
 
 %% Counters
 % secnumdepth: 0 = chapters. Any sections smaller than a chapter are not numbered.
@@ -16,4 +35,19 @@
 % tocdepth: 0 = chapter. Only articles are shown
 \setcounter{tocdepth}{0}
 
+%% Custom commands
+\usepackage{calc}
+\newcommand{\elrarticle}[3]{
+  \chapter{#1}
+  \parbox[l]{\textwidth-20mm}{\itshape \large #2}
 
+  \vskip 10 mm
+
+  \begin{flushleft}
+  \bfseries \scshape #3
+  \end{flushleft}
+
+  \vskip 10 mm
+}
+
+\newcommand{\elrend}{{\footnotesize\bfseries\scshape ELR}}
