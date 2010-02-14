@@ -82,8 +82,9 @@
   \RequirePackage{watermark}
   \watermark{
     \begin{tikzpicture}[scale=10]
+      \useasboundingbox (0,0) rectangle (\textwidth,\textheight)
       \pgfsetfillopacity{0.5}
-      \node[rotate=45] {\bfseries PROOF}
+      \draw (current bounding box.base base) node[rotate=45,transform shape] {\bfseries PROOF};
     \end{tikzpicture}
   }
   \AtEndOfClass{
