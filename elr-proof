@@ -44,7 +44,7 @@ cat >"$PROOF_FILE" <<EOF
 \documentclass{elr}
 \elrtitle{Engineering Leadership Review}{PROOF}
 \begin{document}
-\include{${SOURCE_FILE}}
+\include{$1}
 \end{document}
 EOF
 # compile
