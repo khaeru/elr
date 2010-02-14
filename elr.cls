@@ -1,5 +1,20 @@
 \NeedsTeXFormat{LaTeX2e}[1995/06/01]
 \ProvidesClass{elr}[2009/12/16 v1.00]
+\DeclareOption{proof}{
+  %
+  % watermark
+  \RequirePackage{watermark}
+  \AtEndOfClass{
+    \watermark{PROOF}
+    \elrtitle{Engineering Leadership Review}{PROOF}
+  }
+}
+%
+%% Remaining options to book class
+\DeclareOption*{
+  \PassOptionsToClass{\CurrentOption}{book}
+}
+\ProcessOptions\relax
 \LoadClass[11pt,twoside]{book}
 \setcounter{secnumdepth}{0}
 \setcounter{tocdepth}{0}
@@ -67,20 +82,6 @@
 %
 % tikz
 \RequirePackage{tikz}
-%
-% watermark
-\RequirePackage{watermark}
-\DeclareOption{proof}{
-  \watermark{PROOF}
-  \AtEndOfClass{
-    \elrtitle{Engineering Leadership Review}{PROOF}
-  }
-}
-%
-%% Remaining options to book class
-\DeclareOption*{
-  \PassOptionsToClass{\CurrentOption}{book}
-}
 %
 %% Custom commands
 \newcommand{\elrarticle}[3]{
