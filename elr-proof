@@ -41,11 +41,10 @@ mkdir "$TMP_DIR"
 cd "$TMP_DIR"
 # create the LaTeX wrapper
 cat >"$PROOF_FILE" <<EOF
-\documentclass{elr}
-\elrtitle{Engineering Leadership Review}{PROOF}
+\documentclass[proof]{elr}
 \begin{document}
-\include{$1}
-\end{document}
+  \include{$1}
+  \end{document}
 EOF
 # compile
 echo "$ELR_TEXPATH"

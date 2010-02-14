@@ -68,6 +68,20 @@
 % tikz
 \RequirePackage{tikz}
 %
+% watermark
+\RequirePackage{watermark}
+\DeclareOption{proof}{
+  \watermark{PROOF}
+  \AtEndOfClass{
+    \elrtitle{Engineering Leadership Review}{PROOF}
+  }
+}
+%
+%% Remaining options to book class
+\DeclareOption*{
+  \PassOptionsToClass{\CurrentOption}{book}
+}
+%
 %% Custom commands
 \newcommand{\elrarticle}[3]{
   \chapter{#1}
