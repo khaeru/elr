@@ -80,7 +80,12 @@
 % watermark
 \ifproof
   \RequirePackage{watermark}
-  \watermark{PROOF}
+  \watermark{
+    \begin{tikzpicture}[scale=10]
+      \pgfsetfillopacity{0.5}
+      \node[rotate=45] {\bfseries PROOF}
+    \end{tikzpicture}
+  }
   \AtEndOfClass{
     \elrtitle{Engineering Leadership Review}{PROOF}
   }
