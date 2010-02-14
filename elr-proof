@@ -17,13 +17,13 @@ else
 fi
 
 # Check for existence of source and target files
-if [ ! -f $SOURCE_FILE ]
+if [ ! -f "$SOURCE_FILE" ]
 then
-  echo "Source file ${SOURCE_FILE} not found."
+  echo "Source file '${SOURCE_FILE}' not found."
   exit 0
-elif [ -f $TARGET_FILE ]
+elif [ -f "$TARGET_FILE" ]
 then
-  echo "Target file ${TARGET_FILE} exists; to remove it, type 'rm \"$TARGET_FILE\"'."
+  echo "Target file '${TARGET_FILE}' exists. Type 'rm \"${TARGET_FILE}\"' to remove it."
   exit 0
 fi
 
@@ -37,25 +37,27 @@ PROOF="$1.proof.pdf"
 ELR_TEXPATH="`pwd`:`which $0 | xargs dirname`"
 
 # create and enter the temporary directory
-mkdir $TMP_DIR
-cd $TMP_DIR
+mkdir "$TMP_DIR"
+cd "$TMP_DIR"
 # create the LaTeX wrapper
-cat >$PROOF_FILE <<EOF
+cat >"$PROOF_FILE" <<EOF
 \documentclass{elr}
 \elrtitle{Engineering Leadership Review}{PROOF}
 \begin{document}
-\include{$SOURCE_FILE}
+\include{${SOURCE_FILE}}
 \end{document}
 EOF
 # compile
-rubber -dfs -n 1 -W all --texpath "$ELR_TEXPATH"
+echo "$ELR_TEXPATH"
+echo "$PROOF_FILE"
+rubber -dsvv -n -1 -W all --texpath "$ELR_TEXPATH" "$PROOF_FILE"
 # copy results
-if [ -f $PROOF ]
+if [ -f "$PROOF" ]
 then
-  mv $PROOF "../${TARGET_FILE}"
+  mv "$PROOF" "../${TARGET_FILE}"
 fi
 # empty and remove temporary directory
-rm *
-cd ..
-rmdir $TMP_DIR
+#rm *
+#cd ..
+#rmdir $TMP_DIR
 
