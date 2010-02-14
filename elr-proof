@@ -1,0 +1,61 @@
+#!/bin/sh
+USAGE='Usage: elr-proof [ARTICLE]
+Compile a PDF proof for the article with the name ARTICLE.
+
+The file ARTICLE.tex and any other files referenced from it must be in the
+current directory. The result is a PDF file named ARTICLE.pdf.
+'
+
+# check arguments
+if [ $# -ne 1 ]
+then
+  echo "$USAGE"
+  exit 0
+else
+  SOURCE_FILE="$1.tex"
+  TARGET_FILE="$1.pdf"
+fi
+
+# Check for existence of source and target files
+if [ ! -f $SOURCE_FILE ]
+then
+  echo "Source file ${SOURCE_FILE} not found."
+  exit 0
+elif [ -f $TARGET_FILE ]
+then
+  echo "Target file ${TARGET_FILE} exists; to remove it, type 'rm \"$TARGET_FILE\"'."
+  exit 0
+fi
+
+# temporary directory for compilation
+TMP_DIR="tmp.$1"
+# temporary LaTeX wrapper for compilation
+PROOF_FILE="$1.proof.tex"
+# compilation target
+PROOF="$1.proof.pdf"
+# paths for the current directory and the ELR LaTeX sources
+ELR_TEXPATH="`pwd`:`which $0 | xargs dirname`"
+
+# create and enter the temporary directory
+mkdir $TMP_DIR
+cd $TMP_DIR
+# create the LaTeX wrapper
+cat >$PROOF_FILE <<EOF
+\documentclass{elr}
+\elrtitle{Engineering Leadership Review}{PROOF}
+\begin{document}
+\include{$SOURCE_FILE}
+\end{document}
+EOF
+# compile
+rubber -dfs -n 1 -W all --texpath "$ELR_TEXPATH"
+# copy results
+if [ -f $PROOF ]
+then
+  mv $PROOF "../${TARGET_FILE}"
+fi
+# empty and remove temporary directory
+rm *
+cd ..
+rmdir $TMP_DIR
+

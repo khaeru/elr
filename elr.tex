@@ -1,4 +1,4 @@
-\documentclass[12pt,twoside]{book}
+\documentclass[twoside]{book}
 
 %% Font
 \usepackage{charter}
@@ -6,33 +6,64 @@
 %% General layout
 % geometry: page size and margins
 \usepackage[%
-  a5paper,
-  headsep=5mm,%
+  % General
   includehead,%
   includefoot,%
-  hmargin=10mm,%
-  vmargin=7mm,%
-  bindingoffset=5mm,%
+  % a5 format
+%  a5paper,
+%  headsep=5mm,%
+%  hmargin=10mm,%
+%  vmargin=7mm,%
+%  bindingoffset=5mm,%
+  % lulu.com pocketbook format
+  paperwidth=4.25in,%
+  paperheight=6.87in,%
+  margin=0.5in,%
+  bottom=0.75in,%
+  % half-letter format
+%  paperwidth=5.5in,%
+%  paperheight=8.5in,%
   ]{geometry}
-% fancyhdr: page marks
-\usepackage{fancyhdr}
-  \pagestyle{fancy}
-  \fancyhf{}
-  \fancyhead[LE]{Engineering Leadership Review}
-  \fancyhead[RO]{vol.1 no.1 --- January 2010}
-  \fancyfoot[LE,RO]{[\thepage]}
+  
+% 9pt font
+\def\@mainsize{9}\def\@ptsize{9}%
+  \def\@typesizes{%
+    \or{5}{6}\or{5}{6}\or{6}{7}\or{7}{8}\or{8}{10}%
+    \or{9}{11}% normalsize
+    \or{10}{12}\or{\@xipt}{13}\or{\@xiipt}{14}%
+    \or{\@xivpt}{17}\or{\@xviipt}{20}}%
+%  \normalsize \linespacing=\baselineskip
 
-%% Article layout
 % titlesec: section titles
-\usepackage{titlesec}
+\usepackage[pagestyles]{titlesec}
   \titleformat{\chapter}[display]
     {}{}{0pt}{\bfseries\Large}
   \titlespacing*{\chapter}{0pt}{10mm}{0pt}[20mm]
 
+% fancyhdr: page marks
+\usepackage{fancyhdr}
+  \pagestyle{fancy}
+  \fancyhf{}
+  \fancyhead[LE]{\small Engineering Leadership Review}
+  \fancyhead[RO]{\small vol.1 no.1 --- January 2010}
+  \fancyfoot[LE,RO]{\small \thepage}
+  % for compatibility with titlesec
+  %\unsetcommand{headrule}
+
+
+%% Document features
+% hyperref: hyperlinks within and from documents
+\usepackage[%
+  colorlinks,%
+  linkcolor=black,%
+  urlcolor=black,%
+  ]{hyperref}
+
 %% Counters
-% secnumdepth: 0 = chapters. Any sections smaller than a chapter are not numbered.
+% secnumdepth: 0 = chapters. Any sections smaller than a chapter are not
+% numbered.
 \setcounter{secnumdepth}{0}
-% tocdepth: 0 = chapter. Only articles are shown
+% tocdepth: 0 = chapter. Only articles are shown in the table of contents.
 \setcounter{tocdepth}{0}
 
 %% Custom commands
@@ -49,5 +80,7 @@
 
   \vskip 10 mm
 }
+
+\newenvironment{abstract}[0]{\small}{}
 
 \newcommand{\elrend}{{\footnotesize\bfseries\scshape ELR}}
