@@ -49,7 +49,7 @@ EOF
 # compile
 echo "$ELR_TEXPATH"
 echo "$PROOF_FILE"
-rubber -dsvv -n -1 -W all --texpath "$ELR_TEXPATH" "$PROOF_FILE"
+rubber -dfs -n -1 -W refs -W misc --texpath "$ELR_TEXPATH" "$PROOF_FILE"
 # copy results
 if [ -f "$PROOF" ]
 then
