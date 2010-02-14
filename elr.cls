@@ -1,15 +1,9 @@
 \NeedsTeXFormat{LaTeX2e}[1995/06/01]
 \ProvidesClass{elr}[2009/12/16 v1.00]
+\newif\ifproof
 \DeclareOption{proof}{
-  %
-  % watermark
-  \RequirePackage{watermark}
-  \AtEndOfClass{
-    \watermark{PROOF}
-    \elrtitle{Engineering Leadership Review}{PROOF}
-  }
+  \prooftrue
 }
-%
 %% Remaining options to book class
 \DeclareOption*{
   \PassOptionsToClass{\CurrentOption}{book}
@@ -82,6 +76,15 @@
 %
 % tikz
 \RequirePackage{tikz}
+%
+% watermark
+\ifproof
+  \RequirePackage{watermark}
+  \watermark{PROOF}
+  \AtEndOfClass{
+    \elrtitle{Engineering Leadership Review}{PROOF}
+  }
+\fi
 %
 %% Custom commands
 \newcommand{\elrarticle}[3]{
