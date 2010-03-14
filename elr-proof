@@ -23,8 +23,7 @@ then
   exit 0
 elif [ -f "$TARGET_FILE" ]
 then
-  echo "Target file '${TARGET_FILE}' exists. Type 'rm \"${TARGET_FILE}\"' to remove it."
-  exit 0
+  echo "Target file '${TARGET_FILE}' will be overwritten."
 fi
 
 # temporary directory for compilation
@@ -47,16 +46,14 @@ cat >"$PROOF_FILE" <<EOF
   \end{document}
 EOF
 # compile
-echo "$ELR_TEXPATH"
-echo "$PROOF_FILE"
-rubber -dfs -n -1 -W refs -W misc --texpath "$ELR_TEXPATH" "$PROOF_FILE"
+rubber -dfs -n -1 -W all --texpath "$ELR_TEXPATH" "$PROOF_FILE"
 # copy results
 if [ -f "$PROOF" ]
 then
   mv "$PROOF" "../${TARGET_FILE}"
 fi
 # empty and remove temporary directory
-#rm *
-#cd ..
-#rmdir $TMP_DIR
+rm *
+cd ..
+rmdir $TMP_DIR
 

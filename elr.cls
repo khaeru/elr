@@ -98,10 +98,10 @@
 \ifproof
   \RequirePackage{watermark}
   \watermark{
-    \begin{tikzpicture}[scale=10]
-      \useasboundingbox (0,0) rectangle (\textwidth,\textheight)
-      \pgfsetfillopacity{0.5}
-      \draw (current bounding box.base base) node[rotate=45,transform shape] {\bfseries PROOF};
+    \begin{tikzpicture}[baseline=(current bounding box.north)]
+      \useasboundingbox (0,0) rectangle (\textwidth,\textheight);
+      \pgfsetfillopacity{0.3}
+      \draw (current bounding box.center) node[rotate=45,scale=10] {\bfseries PROOF};
     \end{tikzpicture}
   }
   \AtEndOfClass{
