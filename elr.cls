@@ -65,13 +65,14 @@
   \pagestyle{fancy}
   \fancyhf{}
   \renewcommand{\headrulewidth}{0pt}
+  \AtBeginDocument{\pagestyle{empty}}
 %
 % titlesec: section titles.
 % can't use the 'pagestyles' class option, or else 
 \RequirePackage{titlesec}
   \setcounter{secnumdepth}{-1}
   \titleformat{\chapter}[display]{}{}{0pt}{\sffamily\fontseries{sbc}\selectfont\huge}
-  \titlespacing*{\chapter}{0pt}{20mm}{0pt}[10mm]
+  \titlespacing*{\chapter}{0pt}{0mm}{0pt}[10mm]
   % default definition with Large -> large, 2.3ex -> 1.3ex
 %  \titleformat{\section}{\normalfont\large\bfseries}{\thesection}{1em}{}
   \titlespacing{\section}{0pt}{3.5ex plus 1ex minus .2ex}{1.3ex plus .2ex}
@@ -87,8 +88,9 @@
               {\hspace*{-2pc}}
               [\addvspace{.5pc}]
 %
-% chapterbib
-\RequirePackage[sectionbib]{chapterbib}
+% bibunits: per-chapter (article) bibliographies
+% rubber: module bibtex
+\RequirePackage{bibunits}
 \renewcommand\bibname{{References}}
 %
 % tikz
@@ -110,28 +112,58 @@
 \fi
 %
 %% Custom commands
+%
+% \elrarticle: start a new article. Takes three arguments:
+%  * A MAIN title, used on the first page and in the table of contents
+%  * A SUBtitle, used on the first page and in the table of contents
+%  * A SHORT title used in the page header.
 \newcommand{\elrarticle}[3]{
   \chapter{#1}
-  \addtocontents{toc}{\protect\parbox{0.8\textwidth}{\small Here is a one-sentence summary. Maybe I will add another sentence. Maybe I will add a third sentence.}}
   \hspace{5mm}\parbox[l]{\textwidth-20mm}{\itshape \large #2}
   \vskip 10 mm
-  \begin{flushleft}
-  \bfseries \scshape #3
-  \end{flushleft}
-  \vskip 10 mm
-  \fancyhead[CE]{\hcrulefill\small\itshape #1\hcrulefill}
   \fancyhead[CO]{\hcrulefill\small\itshape #3\hcrulefill}
 }
 %
-\newcommand{\elrbib}[1]{
-  \bibliographystyle{naturemag}
-  \bibliography{#1}
+% \elrsummary: article summary. A couple of sentences describing the article
+% that are shown after its entry in the table of contents
+\newcommand{\elrsummary}[1]{
+  \addtocontents{toc}{\protect\parbox{0.8\textwidth}{\small #1}}
 }
 %
-\newenvironment{abstract}[0]{\fontsize{8pt}{9pt}\selectfont}{}
+% \elrauthors: author information for an article. Takes three arguments:
+%  * The author's/authors' name(s) in full, used on the first page.
+%  * A SHORT author list used in the page header.
+%  * Author credits to be shown in a footnore on the first page.
+\newcommand{\elrauthors}[3]{
+  \begin{flushleft}
+  \bfseries \scshape #1
+  \end{flushleft}
+  \vskip 10 mm
+  \fancyhead[CE]{\hcrulefill\small\itshape #2\hcrulefill}
+  \let\thefootnote\relax\footnotetext{#3}
+}
 %
+% \elrbib: per-article bibliography. The argument should be the name of
+% the bibliography file (.bib) accompanying the article, WITHOUT the extension.
+\newcommand{\elrbib}[1]{
+  \putbib[#1]
+}
+%
+% \elrend: sets a small "ELR" wordmark at the end of an article.
 \newcommand{\elrend}{{\footnotesize\bfseries\scshape ELR}}
 %
+% articles environment
+\newenvironment{articles}[0]{
+  % 20mm space above article titles
+  \titlespacing*{\chapter}{0pt}{20mm}{0pt}[10mm]
+  % Restore page numbering
+  \pagestyle{fancy}
+  % per-article bibliographies
+  \bibliographyunit[\chapter]
+  \defaultbibliographystyle{naturemag}
+}{}
+%
+% \elrtitle:
 \newcommand{\elrtitle}[2]{
   \title{#1}\author{}
   \fancyfoot[LE,RO]{\bfseries \thepage}
