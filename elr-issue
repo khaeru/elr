@@ -31,15 +31,35 @@ TMP_DIR="tmp.$1"
 # paths for the current directory and the ELR LaTeX sources
 ELR_TEXPATH="`pwd`:`which $0 | xargs readlink | xargs dirname`"
 
-# create and enter the temporary directory
+# create the temporary directory
 mkdir "$TMP_DIR"
+
+# generate bibliography directives for rubber
+# count number of source files that use the \elrbib command
+N_BIBS=0
+for f in $(rubber-info --deps --texpath "$ELR_TEXPATH" --into "$TMP_DIR" "$SOURCE_FILE")
+do
+  if [ -f "$f" ] && [ `grep -s elrbib $f` ]
+  then
+    N_BIBS=$((N_BIBS+1))
+  fi
+done
+# watch a file like bu1.aux for each of the above...
+for bu in `seq $N_BIBS`
+do
+  echo "watch ${TMP_DIR}/bu${bu}.bbl" >> $TMP_DIR.directives
+  echo "onchange ${TMP_DIR}/bu${bu}.aux \"BIBINPUTS=.. bibtex bu${bu}\"" >> $TMP_DIR.directives
+done
+
 # compile
-rubber -dfs -n -1 -W all --texpath "$ELR_TEXPATH" --into "$TMP_DIR" "$SOURCE_FILE"
+rubber -vvv -dfs -n -1 -W all --texpath "$ELR_TEXPATH" --into "$TMP_DIR" "$SOURCE_FILE"
+
 # copy results
 if [ -f "${TMP_DIR}/${TARGET_FILE}" ]
 then
   mv "${TMP_DIR}/${TARGET_FILE}" ./
 fi
+
 # empty and remove temporary directory
-rm -r ${TMP_DIR}
+rm -r ${TMP_DIR} $TMP_DIR.directives
 

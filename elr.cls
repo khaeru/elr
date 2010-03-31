@@ -56,8 +56,8 @@
   headsep=3mm,%
   ]{geometry}
 %
-%
-\RequirePackage[strict]{changepage}
+% chngpage/changepage: to alter margins; see \fullpagefigure
+\RequirePackage[strict]{chngpage}
 %
 % fancyhdr: page marks
 \RequirePackage{fancyhdr}
@@ -93,8 +93,16 @@
 %
 % bibunits: per-chapter (article) bibliographies
 % rubber: module bibtex
-\RequirePackage{bibunits}
-\renewcommand\bibname{{References}}
+% rubber: rules rules.ini
+% rubber: make bu1.bbl
+\RequirePackage[sectionbib]{bibunits}
+  \renewcommand\bibname{{References}}
+  \AtBeginDocument{
+    % per-article bibliographies
+    \bibliographyunit[\chapter]
+    % citations like Nature magazine
+    \defaultbibliographystyle{naturemag}
+  }
 %
 % multicol
 \RequirePackage{multicol}
@@ -151,7 +159,7 @@
 % \elrsummary: article summary. A couple of sentences describing the article
 % that are shown after its entry in the table of contents
 \newcommand{\elrsummary}[1]{
-  \addtocontents{toc}{\protect\parbox{0.8\textwidth}{\small #1}}
+  \addtocontents{toc}{\protect\parbox{0.8\textwidth}{\small #1}\protect\par}
 }
 %
 % \elrauthors: author information for an article. Takes three arguments:
@@ -182,9 +190,6 @@
   \titlespacing*{\chapter}{0pt}{20mm}{0pt}[10mm]
   % Restore page numbering
   \pagestyle{fancy}
-  % per-article bibliographies
-  \bibliographyunit[\chapter]
-  \defaultbibliographystyle{naturemag}
 }{}
 %
 % \elrtitle:
