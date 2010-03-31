@@ -39,7 +39,6 @@
 \RequirePackage[%
   includehead,%
   includefoot,%
-  headsep=0mm,
 % a5 format
 %  a5paper,
 %  margin=15mm,%
@@ -54,7 +53,11 @@
   paperheight=8.5in,%
   margin=15mm,%
   bindingoffset=7mm,%
+  headsep=3mm,%
   ]{geometry}
+%
+%
+\RequirePackage[strict]{changepage}
 %
 % fancyhdr: page marks
 \RequirePackage{fancyhdr}
@@ -93,6 +96,9 @@
 \RequirePackage{bibunits}
 \renewcommand\bibname{{References}}
 %
+% multicol
+\RequirePackage{multicol}
+%
 % tikz
 \RequirePackage{tikz}
 %
@@ -111,7 +117,25 @@
   }
 \fi
 %
-%% Custom commands
+%% Custom commands & environments
+%
+% \ccby: icons for the Creative Commons Attributon license.
+\newcommand{\ccby}[1]{
+  \includegraphics[height=#1]{images/cc-large}%
+  \includegraphics[height=#1]{images/by-large}
+}
+%
+% 'colophon' environment
+\newenvironment{colophon}[0]{
+  ~
+  \vfill
+  \begin{flushleft}
+    \addtolength{\parskip}{\baselineskip}
+    \scriptsize
+}{
+  \addtolength{\parskip}{-\baselineskip}
+  \end{flushleft}
+}
 %
 % \elrarticle: start a new article. Takes three arguments:
 %  * A MAIN title, used on the first page and in the table of contents
@@ -165,7 +189,7 @@
 %
 % \elrtitle:
 \newcommand{\elrtitle}[2]{
-  \title{#1}\author{}
+  \title{#1}\author{}\date{#2}
   \fancyfoot[LE,RO]{\bfseries \thepage}
   \fancyfoot[RE]{\small \textsc{#2}}
   \fancyfoot[LO]{\small \textsc{#1}}
@@ -176,9 +200,48 @@
   }
 }
 %
+% \fullpagefigure: a full-page figure (no margins). Use before \elrarticle to
+%   fill a blank left page.
+\newcommand{\fullpagefigure}[1]{
+  % hide page marks
+  \pagestyle{empty}
+  % change the page layout. The lengths match the invocation of the
+  % 'geometry' package above.
+  \changepage{30mm}% increase textheight: 2 × marginwidth
+    {37mm}% increase textwidth: 2 × marginwidth + bindingoffset
+    {-15mm}% decrease odd (left) side margin: marginwidth
+    {-22mm}% decrease even (right) side margin: marginwidth + bindingoffset
+    {}% no change to columnsep
+    {-15mm}% decrease top margin: marginwidth
+    {-\baselineskip}% decrease headheight: one line
+    {-3mm}% decrease headsep to 0.
+    {}% no change to footskip
+  % include the figure itself
+  \begin{figure}[h]
+    \includegraphics[height=\paperheight]{#1}
+  \end{figure}
+  % done with this page
+  \clearpage
+  % restore page marks
+  \pagestyle{fancy}
+  % restore page layout. Numbers are the same as above, opposite sign
+  \changepage{-30mm}{-37mm}{15mm}{22mm}{}{15mm}{\baselineskip}{3mm}{}
+}
+%
 % from http://www.tug.org/pipermail/texhax/2004-August/002644.html
 \newcommand*\hcrulefill{%
   \leavevmode\leaders\hrule depth-2pt height 2.4pt\hfill\kern0pt
+}
+%
+% \editorgroup: TODO
+\newcommand{\editorgroup}[2]{
+  \begin{multicols}{2}
+    \begin{flushright}
+     \scshape #2
+    \end{flushright}
+    \columnbreak
+    #1
+  \end{multicols}
 }
 %
 \endinput

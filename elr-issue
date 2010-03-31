@@ -29,7 +29,7 @@ fi
 # temporary directory for compilation
 TMP_DIR="tmp.$1"
 # paths for the current directory and the ELR LaTeX sources
-ELR_TEXPATH="`pwd`:`which $0 | xargs dirname`"
+ELR_TEXPATH="`pwd`:`which $0 | xargs readlink | xargs dirname`"
 
 # create and enter the temporary directory
 mkdir "$TMP_DIR"
@@ -41,5 +41,5 @@ then
   mv "${TMP_DIR}/${TARGET_FILE}" ./
 fi
 # empty and remove temporary directory
-#rm -r ${TMP_DIR}
+rm -r ${TMP_DIR}
 
