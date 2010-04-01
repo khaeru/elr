@@ -32,12 +32,13 @@ TMP_DIR="tmp.$1"
 ELR_TEXPATH="`pwd`:`which $0 | xargs readlink | xargs dirname`"
 
 # create the temporary directory
-mkdir "$TMP_DIR"
+mkdir $TMP_DIR
 
 # generate bibliography directives for rubber
 # count number of source files that use the \elrbib command
 N_BIBS=0
-for f in $(rubber-info --deps --texpath "$ELR_TEXPATH" --into "$TMP_DIR" "$SOURCE_FILE")
+DEPS=$(rubber-info --deps --texpath "$ELR_TEXPATH" "$SOURCE_FILE")
+for f in $DEPS
 do
   if [ -f "$f" ] && [ `grep -s elrbib $f` ]
   then
@@ -47,19 +48,21 @@ done
 # watch a file like bu1.aux for each of the above...
 for bu in `seq $N_BIBS`
 do
-  echo "watch ${TMP_DIR}/bu${bu}.bbl" >> $TMP_DIR.directives
-  echo "onchange ${TMP_DIR}/bu${bu}.aux \"BIBINPUTS=.. bibtex bu${bu}\"" >> $TMP_DIR.directives
+  cat >> $TMP_DIR.directives <<EOF
+watch ${TMP_DIR}/bu${bu}.bbl
+onchange ${TMP_DIR}/bu${bu}.aux "BIBINPUTS=.. bibtex bu${bu}"
+EOF
 done
 
 # compile
-rubber -vvv -dfs -n -1 -W all --texpath "$ELR_TEXPATH" --into "$TMP_DIR" "$SOURCE_FILE"
+rubber -dfs -n -1 -W all --texpath "$ELR_TEXPATH" --into "$TMP_DIR" "$SOURCE_FILE"
 
 # copy results
-if [ -f "${TMP_DIR}/${TARGET_FILE}" ]
+if [ -f "$TMP_DIR/$TARGET_FILE" ]
 then
-  mv "${TMP_DIR}/${TARGET_FILE}" ./
+  mv "$TMP_DIR/$TARGET_FILE" ./
 fi
 
 # empty and remove temporary directory
-rm -r ${TMP_DIR} $TMP_DIR.directives
+rm -r $TMP_DIR $TMP_DIR.directives
 

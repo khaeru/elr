@@ -12,128 +12,169 @@
 \LoadClass[11pt,twoside]{book}
 \setcounter{secnumdepth}{0}
 \setcounter{tocdepth}{0}
+
+%% Package includes ————————————————————————————————————————————————————————————
 %
-% calc
+% calc - infix notation arithmetic in LaTeX
 \RequirePackage{calc}
 %
-% charter: fonts.
+% charter - Bitstream charter fonts, and
+% lmodern - Latin modern fonts
+%   The package fontenc is required to get the proper encoding of these fonts
 \RequirePackage[T1]{fontenc}
 \RequirePackage{charter}
 \RequirePackage{lmodern}
-\renewcommand{\rmdefault}{bch}
-\renewcommand{\sfdefault}{lmss}
-% not sure why this is necessary...
-\renewcommand{\bfdefault}{bx}
+  % default roman (serif) text is Bitstream Charter
+  \renewcommand{\rmdefault}{bch}
+  % default sans serif text is Latin Modern Sans
+  \renewcommand{\sfdefault}{lmss}
+  % not sure why this is necessary...
+  \renewcommand{\bfdefault}{bx}
 %
-% hyperref:
+% hyperref - Hypertext marks in LaTeX
 \RequirePackage[%
-  colorlinks,%
+  colorlinks,% ...instead of drawing a border around them.
   linkcolor=black,%
   urlcolor=black,%
   ]{hyperref}
 %
-% basic required contents
-%\renewcommand\normalsize{\fontsize{9pt}{11pt}\selectfont}
-%
-% geometry: page size and margins
+% geometry - control page dimensions
 \RequirePackage[%
   includehead,%
   includefoot,%
-% a5 format
+%% A5 format (unused)
 %  a5paper,
-%  margin=15mm,%
-%  bindingoffset=5mm,%
-%% lulu.com pocketbook format
+%% lulu.com 'Pocketbook' format (unused)
 %  paperwidth=4.25in,%
 %  paperheight=6.87in,%
-%  margin=0.5in,%
-%  bottom=0.75in,%
-%% half-letter format
+%% lulu.com 'Digest' (half-letter) format
   paperwidth=5.5in,%
   paperheight=8.5in,%
   margin=15mm,%
-  bindingoffset=7mm,%
-  headsep=3mm,%
+  bindingoffset=7mm,% larger margin on the binding side
+  headsep=3mm,% separation between the header (see 'fancyhdr' below) and text
   ]{geometry}
 %
-% chngpage/changepage: to alter margins; see \fullpagefigure
-\RequirePackage[strict]{chngpage}
-%
-% fancyhdr: page marks
-\RequirePackage{fancyhdr}
-  % move the page numbers on the 'plain' page style used for chapter first pages
-  \fancypagestyle{plain}{
-    \fancyhf{}
-  }
-  \pagestyle{fancy}
-  \fancyhf{}
-  \renewcommand{\headrulewidth}{0pt}
-  \AtBeginDocument{\pagestyle{empty}}
-%
-% titlesec: section titles.
-% can't use the 'pagestyles' class option, or else 
-\RequirePackage{titlesec}
-  \setcounter{secnumdepth}{-1}
-  \titleformat{\chapter}[display]{}{}{0pt}{\sffamily\fontseries{sbc}\selectfont\huge}
-  \titlespacing*{\chapter}{0pt}{0mm}{0pt}[10mm]
-  % default definition with Large -> large, 2.3ex -> 1.3ex
-%  \titleformat{\section}{\normalfont\large\bfseries}{\thesection}{1em}{}
-  \titlespacing{\section}{0pt}{3.5ex plus 1ex minus .2ex}{1.3ex plus .2ex}
-  % default definition with large -> normalsize, without \bfseries
-%  \titleformat{\subsection}{\normalfont\fontsize{10pt}{11pt}\selectfont\itshape}{\thesubsection}{1em}{}
-  \titleformat{\subsection}{\normalfont\large\itshape}{\thesubsection}{1em}{}
-\RequirePackage{titletoc}
-  \titlecontents{chapter}
-              [0pt]
-              {\addvspace{1.5pc}}
-              {}
-              {\hspace*{-2pc}\makebox[2pc][c]{\bfseries\thecontentspage} \bfseries}
-              {\hspace*{-2pc}}
-              [\addvspace{.5pc}]
-%
-% bibunits: per-chapter (article) bibliographies
-% rubber: module bibtex
-% rubber: rules rules.ini
-% rubber: make bu1.bbl
+% bibunits - separate bibliographies for each chapter
 \RequirePackage[sectionbib]{bibunits}
   \renewcommand\bibname{{References}}
   \AtBeginDocument{
     % per-article bibliographies
     \bibliographyunit[\chapter]
-    % citations like Nature magazine
-    \defaultbibliographystyle{naturemag}
+    \defaultbibliographystyle{apalike}
   }
 %
-% multicol
+% chngpage/changepage - local changes to margins
+%   See \fullpagefigure. 'changepage' is the newer packagename, available in
+%   TeXLive 2009. TeXLive 2007 has the older package
+\RequirePackage[strict]{chngpage}
+%
+% fancyhdr - Page layout in LaTeX
+%   To get the right headers and footers in different parts of the issue, the
+%   fancyhdr commands \fancyhead and \fancyfoot are used in several places. See
+%   \elrarticle, \elrauthors and \elrtitle.
+\RequirePackage{fancyhdr}
+  \pagestyle{fancy}
+  % clear headers and footers, they will be defined elsewhere
+  \fancyhf{}
+  % no line separating the header from the text
+  \renewcommand{\headrulewidth}{0pt}
+  % title page, colophon, etc. have no page marks at all
+  \AtBeginDocument{\pagestyle{empty}}
+%
+% titlesec - Redefine section titles
+%   Redefine the way \chapter, \section and so on look. Can't use the
+%   'pagestyles' class option (TODO: why?)
+\RequirePackage{titlesec}
+  % no sections are numbered
+  \setcounter{secnumdepth}{-1}
+  % format and spacing for chapter titles
+  \titleformat{\chapter}[display]{}{}{0pt}%
+    {\sffamily\fontseries{sbc}\selectfont\huge}
+  \titlespacing*{\chapter}{0pt}{0mm}{0pt}[10mm]
+  % spacing for section titles: default definition with 2.3ex -> 1.3ex
+  \titlespacing{\section}{0pt}{3.5ex plus 1ex minus .2ex}{1.3ex plus .2ex}
+  % format for subection titles: italics
+  \titleformat{\subsection}{\normalfont\large\itshape}{\thesubsection}{1em}{}
+%
+% titletoc - Change the way contents lines for \titlecontents are laid out
+\RequirePackage{titletoc}
+  \titlecontents{chapter}
+    [0pt]
+    {\addvspace{1.5pc}}
+    {}
+    {\hspace*{-2pc}\makebox[2pc][c]{\bfseries\thecontentspage} \bfseries}
+    {\hspace*{-2pc}}
+    [\addvspace{.5pc}]
+%
+% multicol - an environment for multicolumn output
+%   Makes the 'multicol' environment available, which is used for \editorgroup
+%   (below).
 \RequirePackage{multicol}
 %
-% tikz
+% tikz - drawings
 \RequirePackage{tikz}
 %
-% watermark
+% watermark - watermarks on every page
+%   Used for preparing proofs.
 \ifproof
   \RequirePackage{watermark}
+  % big "PROOF" watermark filling the whole page
   \watermark{
     \begin{tikzpicture}[baseline=(current bounding box.north)]
       \useasboundingbox (0,0) rectangle (\textwidth,\textheight);
       \pgfsetfillopacity{0.3}
-      \draw (current bounding box.center) node[rotate=45,scale=10] {\bfseries PROOF};
+      \node [rotate=45,scale=10] at (current bounding box.center)
+        {\bfseries PROOF};
     \end{tikzpicture}
   }
+  % proofs are made without a preamble, frontmatter or endmatter, so make sure
+  % elrtitle is called.
   \AtEndOfClass{
     \elrtitle{Engineering Leadership Review}{PROOF}
   }
 \fi
 %
-%% Custom commands & environments
+%% Custom commands & environments ——————————————————————————————————————————————
 %
-% \ccby: icons for the Creative Commons Attributon license.
+% \article - start a new article
+%   Accepts three arguments:
+%    * A MAIN title, used on the first page and in the table of contents
+%    * A SUBtitle, used on the first page and in the table of contents
+%    * A SHORT title used in the page header.
+\newcommand{\article}[3]{
+  \chapter{#1}
+  \hspace{5mm}\parbox[l]{\textwidth-20mm}{\itshape \large #2}
+  \vskip 10 mm
+  \fancyhead[CO]{\hcrulefill\small\itshape #3\hcrulefill}
+}
+%
+% \authors: author information for an article. Takes three arguments:
+%  * The author's/authors' name(s) in full, used on the first page.
+%  * A SHORT author list used in the page header.
+%  * Author credits to be shown in a footnote on the first page.
+\newcommand{\authors}[3]{
+  \begin{flushleft}
+    \bfseries \scshape #1
+  \end{flushleft}
+  \vskip 10 mm
+  \fancyhead[CE]{\hcrulefill\small\itshape #2\hcrulefill}
+  \addtocontents{toc}{%
+    \vspace{-0.5\baselineskip}%
+    \noindent\protect\parbox{\textwidth}{\itshape #1}%
+    \protect\par%
+  }
+  \let\thefootnote\relax\footnotetext{#3}
+}
+%
+% \ccby - Icons for the Creative Commons Attributon license.
 \newcommand{\ccby}[1]{
   \includegraphics[height=#1]{images/cc-large}%
   \includegraphics[height=#1]{images/by-large}
 }
 %
 % 'colophon' environment
+%   Bottom left corner of a page; small font.
 \newenvironment{colophon}[0]{
   ~
   \vfill
@@ -145,46 +186,22 @@
   \end{flushleft}
 }
 %
-% \elrarticle: start a new article. Takes three arguments:
-%  * A MAIN title, used on the first page and in the table of contents
-%  * A SUBtitle, used on the first page and in the table of contents
-%  * A SHORT title used in the page header.
-\newcommand{\elrarticle}[3]{
-  \chapter{#1}
-  \hspace{5mm}\parbox[l]{\textwidth-20mm}{\itshape \large #2}
-  \vskip 10 mm
-  \fancyhead[CO]{\hcrulefill\small\itshape #3\hcrulefill}
-}
-%
-% \elrsummary: article summary. A couple of sentences describing the article
-% that are shown after its entry in the table of contents
-\newcommand{\elrsummary}[1]{
-  \addtocontents{toc}{\protect\parbox{0.8\textwidth}{\small #1}\protect\par}
-}
-%
-% \elrauthors: author information for an article. Takes three arguments:
-%  * The author's/authors' name(s) in full, used on the first page.
-%  * A SHORT author list used in the page header.
-%  * Author credits to be shown in a footnore on the first page.
-\newcommand{\elrauthors}[3]{
-  \begin{flushleft}
-  \bfseries \scshape #1
-  \end{flushleft}
-  \vskip 10 mm
-  \fancyhead[CE]{\hcrulefill\small\itshape #2\hcrulefill}
-  \let\thefootnote\relax\footnotetext{#3}
-}
-%
-% \elrbib: per-article bibliography. The argument should be the name of
-% the bibliography file (.bib) accompanying the article, WITHOUT the extension.
+% \elrbib - Per-article bibliography
+%   The argument should be the name of the bibliography file (.bib)
+%   accompanying the article, WITHOUT the extension. See documentation for the
+%   'bibunits' package.
 \newcommand{\elrbib}[1]{
   \putbib[#1]
 }
 %
-% \elrend: sets a small "ELR" wordmark at the end of an article.
-\newcommand{\elrend}{{\footnotesize\bfseries\scshape ELR}}
+% \elrend - 'ELR' wordmark
+\newcommand{\elrend}{
+  \hfill {\footnotesize\bfseries\scshape ELR}
+}
 %
-% articles environment
+% 'articles' environment - Container for ELR articles
+%   Changes some elements of formatting that are specific to articles, but not
+%   to be used in the front- and back-matter.
 \newenvironment{articles}[0]{
   % 20mm space above article titles
   \titlespacing*{\chapter}{0pt}{20mm}{0pt}[10mm]
@@ -192,21 +209,8 @@
   \pagestyle{fancy}
 }{}
 %
-% \elrtitle:
-\newcommand{\elrtitle}[2]{
-  \title{#1}\author{}\date{#2}
-  \fancyfoot[LE,RO]{\bfseries \thepage}
-  \fancyfoot[RE]{\small \textsc{#2}}
-  \fancyfoot[LO]{\small \textsc{#1}}
-  \fancypagestyle{plain}{
-    \fancyfoot{}
-    \fancyhead{}
-    \fancyfoot[C]{\bfseries \thepage}
-  }
-}
-%
-% \fullpagefigure: a full-page figure (no margins). Use before \elrarticle to
-%   fill a blank left page.
+% \fullpagefigure - A full-page figure with no margins
+%   Use before \elrarticle to fill a blank left page.
 \newcommand{\fullpagefigure}[1]{
   % hide page marks
   \pagestyle{empty}
@@ -233,12 +237,31 @@
   \changepage{-30mm}{-37mm}{15mm}{22mm}{}{15mm}{\baselineskip}{3mm}{}
 }
 %
-% from http://www.tug.org/pipermail/texhax/2004-August/002644.html
+% \hcrulefill - Space-filling horizontal rule at text centreline
+%   For use in \elrarticle and \elrauthors, above. From
+%   http://www.tug.org/pipermail/texhax/2004-August/002644.html
 \newcommand*\hcrulefill{%
   \leavevmode\leaders\hrule depth-2pt height 2.4pt\hfill\kern0pt
 }
 %
-% \editorgroup: TODO
+% \issue - Issue title
+%   Sets the title (first argument) and date (second argument) for an issue.
+\newcommand{\issue}[2]{
+  \title{#1}\author{}\date{#2}
+  \fancyfoot[LE,RO]{\bfseries \thepage}
+  \fancyfoot[RE]{\small \textsc{#2}}
+  \fancyfoot[LO]{\small \textsc{#1}}
+  \fancypagestyle{plain}{
+    \fancyfoot{}
+    \fancyhead{}
+    \fancyfoot[C]{\bfseries \thepage}
+  }
+}
+%
+% \editorgroup - Group of Editorial Board members
+%   For use in the masthead. The first argument is the title of members in the
+%   group; the second argument is their names. Names should be separated with
+%   newlines (\\).
 \newcommand{\editorgroup}[2]{
   \begin{multicols}{2}
     \begin{flushright}
@@ -247,6 +270,17 @@
     \columnbreak
     #1
   \end{multicols}
+}
+%
+% \summary - Article summary
+%   Accepts one argument — some sentences describing the article that are shown
+%   after its entry in the table of contents
+\newcommand{\summary}[1]{
+  \addtocontents{toc}{%
+    \vspace{0.5\baselineskip}%
+    \protect\parbox{0.8\textwidth}{\small #1}%
+    \protect\par%
+  }
 }
 %
 \endinput
