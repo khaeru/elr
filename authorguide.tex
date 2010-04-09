@@ -1,7 +1,5 @@
-\chapter*{Write for ELR!}
-
-\paragraph{Topics}
-If unsure, contact \emph{elr@lot.utoronto.ca}.
+\chapter*{Instructions to Authors}
+\label{authorguide}
 
 \paragraph{Audience}
 Refer to the \emph{Author-Audience Matrix}.
@@ -10,30 +8,53 @@ We encourage you to share lessons and insights which are broadly reusable (i.e. 
 Either note your audience choice when submitting, or make some explicit reference to it in your text.
 \begin{figure}
 \centering
-\begin{tikzpicture}
-  \node [matrix,nodes={circle,fill=black!40},column sep=3mm,row sep=3mm] (matrix) at (0,0) {
-    \node (a) {}; & \node (b) {}; & \node (c) {\bfseries\small 1}; & \node (d) {}; & \node (e) {}; \\
-    \node (f) {}; & \node {}; & \node {}; & \node {}; & \node {}; \\
-    \node (g) {}; & \node {}; & \node {\bfseries\small 2}; & \node {}; & \node {}; \\
-    \node (h) {}; & \node {}; & \node {}; & \node {}; & \node {\bfseries\small 3}; \\
-    \node (i) {}; & \node {}; & \node {}; & \node {}; & \node {}; \\
-  };
-  \begin{scope}[every node/.style={anchor=base west,inner sep=3mm,rotate=60}]
-    \path (a) node {undergrad.};
-    \path (b) node {graduate};
-    \path (c) node {academics};
-    \path (d) node {professionals};
-    \path (e) node {others};
-  \end{scope}
-  \begin{scope}[every node/.style={anchor=base east,inner sep=3mm}]
-    \path (a) node {undergrad.};
-    \path (f) node {graduate};
-    \path (g) node {academics};
-    \path (h) node {professionals};
-    \path (i) node {others};
-  \end{scope}
-  \draw (matrix.east) node [anchor=north,inner sep=3mm,rotate=90] {\bfseries\scshape Author(s)};
-  \draw (matrix.south) node [anchor=north,inner sep=3mm] {\bfseries\scshape Audience};
+\begin{tikzpicture}[pubaxis/.style={font=\bfseries\scshape}]
+  \draw[draw=gray!30,ultra thick,step=6mm] (0,0) grid (24mm,24mm);
+  \foreach \x in {0,6,...,24}
+    \foreach \y in {0,6,...,24}
+      \fill (\x mm,\y mm) circle (0.8mm);
+  \path;
+  { [every node/.style={anchor=north west,scale=0.8}]
+    \node at (12mm,24mm) {1};
+    \node at (12mm,12mm) {2};
+    \node at (24mm,6mm) {3};
+  }
+  { [every node/.style={inner sep=3mm}]
+    { [shift={(0,24mm)},every node/.style={anchor=base west,rotate=60}]
+      \node at (0,0) {undergrad.};
+      \node at (6mm,0) {graduate};
+      \node at (12mm,0) {academics};
+      \node at (18mm,0) {professionals};
+      \node at (24mm,0) {others};
+    }
+    { [every node/.style={anchor=mid east}]
+      \node at (0,24mm) {undergrad.};
+      \node at (0,18mm) {graduate};
+      \node at (0,12mm) {academics};
+      \node at (0,6mm) {professionals};
+      \node at (0,0) {others};
+    }
+    { [every node/.style={anchor=north}]
+      \node [pubaxis,rotate=90] at (26mm,12mm) {Author(s)};
+      \node [pubaxis] at (12mm,-2mm) {Audience};
+    }
+  }
+  { [shift={(42mm,3mm)}]
+    \draw [|<->|,ultra thick] (0,0) -- (24mm,0);
+    \node [pubaxis,anchor=north] at (12mm,-2mm) {Length};
+    { [every node/.style={anchor=south,inner sep=3mm,scale=0.8}]
+      \node at (0,0) {1,000};
+      \node at (24mm,0) {10,000};
+    }
+  }
+  { [shift={(42mm,18mm)}]
+    \draw [|<->|,ultra thick] (0,0) -- (24mm,0);
+    \node [pubaxis,anchor=north] at (12mm,-2mm) {Abstraction};
+    { [every node/.style={anchor=south,inner sep=3mm,scale=0.8}]
+      \node at (0,0) {Experiential};
+      \node at (24mm,0) {Conceptual};
+    }
+  }
 \end{tikzpicture}
 \caption{Author-Audience Matrix. \textbf{(1)} includes student coursework, \textbf{(2)} includes most technical journals, and \textbf{(3)} could be engineering consultants reporting to a client firm.}
 \end{figure}

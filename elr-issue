@@ -64,5 +64,6 @@ then
 fi
 
 # empty and remove temporary directory
-rm -r $TMP_DIR $TMP_DIR.directives
+rm -r $TMP_DIR
+rm -r $TMP_DIR.directives
 

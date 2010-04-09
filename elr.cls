@@ -9,11 +9,11 @@
   \PassOptionsToClass{\CurrentOption}{book}
 }
 \ProcessOptions\relax
-\LoadClass[11pt,twoside]{book}
+\LoadClass[11pt,openany,twoside]{book}
 \setcounter{secnumdepth}{0}
 \setcounter{tocdepth}{0}
 
-%% Package includes ————————————————————————————————————————————————————————————
+%% Package includes ———————————————————————————————————————————————————————————
 %
 % calc - infix notation arithmetic in LaTeX
 \RequirePackage{calc}
@@ -32,8 +32,11 @@
   \renewcommand{\bfdefault}{bx}
 %
 % hyperref - Hypertext marks in LaTeX
+%   All kinds of fancy stuff.
 \RequirePackage[%
+  pdftex,% because we compile with pdflatex
   colorlinks,% ...instead of drawing a border around them.
+  citecolor=black,%
   linkcolor=black,%
   urlcolor=black,%
   ]{hyperref}
@@ -55,13 +58,19 @@
   headsep=3mm,% separation between the header (see 'fancyhdr' below) and text
   ]{geometry}
 %
+% natbib
+%   Must be loaded before bibunits.
+\RequirePackage[sort]{natbib}
+  \newcommand{\bibfont}{\small}
+  \setlength{\bibsep}{0pt}
+%
 % bibunits - separate bibliographies for each chapter
 \RequirePackage[sectionbib]{bibunits}
   \renewcommand\bibname{{References}}
   \AtBeginDocument{
     % per-article bibliographies
     \bibliographyunit[\chapter]
-    \defaultbibliographystyle{apalike}
+    \defaultbibliographystyle{plainnat}
   }
 %
 % chngpage/changepage - local changes to margins
@@ -82,6 +91,11 @@
   % title page, colophon, etc. have no page marks at all
   \AtBeginDocument{\pagestyle{empty}}
 %
+%% inputenc - input encoding
+%%   Commented for the time being, because it interrupts processing when it
+%%   encounters bad .bib files.
+%\RequirePackage[utf8x]{inputenc}
+%
 % titlesec - Redefine section titles
 %   Redefine the way \chapter, \section and so on look. Can't use the
 %   'pagestyles' class option (TODO: why?)
@@ -90,7 +104,7 @@
   \setcounter{secnumdepth}{-1}
   % format and spacing for chapter titles
   \titleformat{\chapter}[display]{}{}{0pt}%
-    {\sffamily\fontseries{sbc}\selectfont\huge}
+    {\sffamily\fontseries{sbc}\selectfont\Huge}
   \titlespacing*{\chapter}{0pt}{0mm}{0pt}[10mm]
   % spacing for section titles: default definition with 2.3ex -> 1.3ex
   \titlespacing{\section}{0pt}{3.5ex plus 1ex minus .2ex}{1.3ex plus .2ex}
@@ -114,6 +128,7 @@
 %
 % tikz - drawings
 \RequirePackage{tikz}
+  \usetikzlibrary{scopes}
 %
 % watermark - watermarks on every page
 %   Used for preparing proofs.
@@ -135,7 +150,7 @@
   }
 \fi
 %
-%% Custom commands & environments ——————————————————————————————————————————————
+%% Custom commands & environments —————————————————————————————————————————————
 %
 % \article - start a new article
 %   Accepts three arguments:
@@ -155,7 +170,7 @@
 %  * Author credits to be shown in a footnote on the first page.
 \newcommand{\authors}[3]{
   \begin{flushleft}
-    \bfseries \scshape #1
+    \bfseries \scshape \Large #1
   \end{flushleft}
   \vskip 10 mm
   \fancyhead[CE]{\hcrulefill\small\itshape #2\hcrulefill}
@@ -207,7 +222,10 @@
   \titlespacing*{\chapter}{0pt}{20mm}{0pt}[10mm]
   % Restore page numbering
   \pagestyle{fancy}
-}{}
+  \@openrighttrue
+}{
+  \@openrightfalse
+}
 %
 % \fullpagefigure - A full-page figure with no margins
 %   Use before \elrarticle to fill a blank left page.
@@ -246,10 +264,10 @@
 %
 % \issue - Issue title
 %   Sets the title (first argument) and date (second argument) for an issue.
-\newcommand{\issue}[2]{
-  \title{#1}\author{}\date{#2}
+\newcommand{\issue}[3]{
+  \title{#1}\author{}\date{#2 \\ #3}
   \fancyfoot[LE,RO]{\bfseries \thepage}
-  \fancyfoot[RE]{\small \textsc{#2}}
+  \fancyfoot[RE]{\small \textsc{#3}}
   \fancyfoot[LO]{\small \textsc{#1}}
   \fancypagestyle{plain}{
     \fancyfoot{}
@@ -270,6 +288,13 @@
     \columnbreak
     #1
   \end{multicols}
+}
+%
+% \signed - Credits for quotations
+%   From http://www.latex-community.org/forum/viewtopic.php?f=5&t=2566
+\newcommand{\signed}[1]{%
+  \unskip\hspace*{1em plus 1fill}%
+  \nolinebreak[3]\hspace*{\fill}\mbox{\upshape --- #1}
 }
 %
 % \summary - Article summary
