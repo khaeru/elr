@@ -18,6 +18,14 @@
 % calc - infix notation arithmetic in LaTeX
 \RequirePackage{calc}
 %
+% caption - customize captions of floating environments
+\RequirePackage[labelformat=empty,font={small,bf}]{caption}
+%
+% chngpage/changepage - local changes to margins
+%   See \fullpagefigure. 'changepage' is the newer packagename, available in
+%   TeXLive 2009. TeXLive 2007 has the older package
+\RequirePackage[strict]{changepage}
+%
 % charter - Bitstream charter fonts, and
 % lmodern - Latin modern fonts
 %   The package fontenc is required to get the proper encoding of these fonts
@@ -61,7 +69,7 @@
 % natbib
 %   Must be loaded before bibunits.
 \RequirePackage[sort]{natbib}
-  \newcommand{\bibfont}{\small}
+  \renewcommand{\bibfont}{\small}
   \setlength{\bibsep}{0pt}
 %
 % bibunits - separate bibliographies for each chapter
@@ -72,11 +80,6 @@
     \bibliographyunit[\chapter]
     \defaultbibliographystyle{plainnat}
   }
-%
-% chngpage/changepage - local changes to margins
-%   See \fullpagefigure. 'changepage' is the newer packagename, available in
-%   TeXLive 2009. TeXLive 2007 has the older package
-\RequirePackage[strict]{chngpage}
 %
 % fancyhdr - Page layout in LaTeX
 %   To get the right headers and footers in different parts of the issue, the
@@ -89,7 +92,7 @@
   % no line separating the header from the text
   \renewcommand{\headrulewidth}{0pt}
   % title page, colophon, etc. have no page marks at all
-  \AtBeginDocument{\pagestyle{empty}}
+%  \AtBeginDocument{\thispagestyle{plain}}
 %
 %% inputenc - input encoding
 %%   Commented for the time being, because it interrupts processing when it
@@ -103,13 +106,13 @@
   % no sections are numbered
   \setcounter{secnumdepth}{-1}
   % format and spacing for chapter titles
-  \titleformat{\chapter}[display]{}{}{0pt}%
-    {\sffamily\fontseries{sbc}\selectfont\Huge}
+  \titleformat{\chapter}[display]{\filright\sffamily\fontseries{sbc}\selectfont\Huge}{}{0pt}{}
   \titlespacing*{\chapter}{0pt}{0mm}{0pt}[10mm]
+  \titleformat{\section}{\filright\normalfont\Large\bfseries}{}{1em}{}
   % spacing for section titles: default definition with 2.3ex -> 1.3ex
   \titlespacing{\section}{0pt}{3.5ex plus 1ex minus .2ex}{1.3ex plus .2ex}
   % format for subection titles: italics
-  \titleformat{\subsection}{\normalfont\large\itshape}{\thesubsection}{1em}{}
+  \titleformat{\subsection}{\filright\normalfont\large\itshape}{}{1em}{}
 %
 % titletoc - Change the way contents lines for \titlecontents are laid out
 \RequirePackage{titletoc}
@@ -161,7 +164,20 @@
   \chapter{#1}
   \hspace{5mm}\parbox[l]{\textwidth-20mm}{\itshape \large #2}
   \vskip 10 mm
-  \fancyhead[CO]{\hcrulefill\small\itshape #3\hcrulefill}
+  \fancyhead[CO]{\hcrulefill~\small\itshape #3~\hcrulefill}
+}
+%
+% 'articles' environment - Container for ELR articles
+%   Changes some elements of formatting that are specific to articles, but not
+%   to be used in the front- and back-matter.
+\newenvironment{articles}[0]{
+  % 20mm space above article titles
+  \titlespacing*{\chapter}{0pt}{20mm}{0pt}[10mm]
+  % Restore page numbering
+  \pagestyle{fancy}
+  \@openrighttrue
+}{
+  \@openrightfalse
 }
 %
 % \authors: author information for an article. Takes three arguments:
@@ -173,10 +189,10 @@
     \bfseries \scshape \Large #1
   \end{flushleft}
   \vskip 10 mm
-  \fancyhead[CE]{\hcrulefill\small\itshape #2\hcrulefill}
+  \fancyhead[CE]{\hcrulefill~\small\itshape #2~\hcrulefill}
   \addtocontents{toc}{%
     \vspace{-0.5\baselineskip}%
-    \noindent\protect\parbox{\textwidth}{\itshape #1}%
+    \noindent\protect\parbox{0.9\textwidth}{\itshape #1}%
     \protect\par%
   }
   \let\thefootnote\relax\footnotetext{#3}
@@ -191,6 +207,7 @@
 % 'colophon' environment
 %   Bottom left corner of a page; small font.
 \newenvironment{colophon}[0]{
+  \thispagestyle{empty}
   ~
   \vfill
   \begin{flushleft}
@@ -199,6 +216,14 @@
 }{
   \addtolength{\parskip}{-\baselineskip}
   \end{flushleft}
+%  \setcounter{page}{1}
+}
+%
+% \crule - centered rule
+\newcommand{\crule}[2]{
+  \begin{center}
+    \rule{#1\linewidth}{#2}
+  \end{center}
 }
 %
 % \elrbib - Per-article bibliography
@@ -212,19 +237,6 @@
 % \elrend - 'ELR' wordmark
 \newcommand{\elrend}{
   \hfill {\footnotesize\bfseries\scshape ELR}
-}
-%
-% 'articles' environment - Container for ELR articles
-%   Changes some elements of formatting that are specific to articles, but not
-%   to be used in the front- and back-matter.
-\newenvironment{articles}[0]{
-  % 20mm space above article titles
-  \titlespacing*{\chapter}{0pt}{20mm}{0pt}[10mm]
-  % Restore page numbering
-  \pagestyle{fancy}
-  \@openrighttrue
-}{
-  \@openrightfalse
 }
 %
 % \fullpagefigure - A full-page figure with no margins
