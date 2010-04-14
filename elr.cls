@@ -120,9 +120,9 @@
     [0pt]
     {\addvspace{1.5pc}}
     {}
-    {\hspace*{-2pc}\makebox[2pc][c]{\bfseries\thecontentspage} \bfseries}
-    {\hspace*{-2pc}}
-    [\addvspace{.5pc}]
+    {\contentspush{\makebox[2pc][c]{\bfseries\thecontentspage}}\bfseries\raggedright}
+    {}
+%    {\hspace*{-2.3pc}}
 %
 % multicol - an environment for multicolumn output
 %   Makes the 'multicol' environment available, which is used for \editorgroup
@@ -191,8 +191,7 @@
   \vskip 10 mm
   \fancyhead[CE]{\hcrulefill~\small\itshape #2~\hcrulefill}
   \addtocontents{toc}{%
-    \vspace{-0.5\baselineskip}%
-    \noindent\protect\parbox{0.9\textwidth}{\itshape #1}%
+    \noindent\hspace*{2.15pc}\protect\parbox{0.8\textwidth}{\itshape #1}%
     \protect\par%
   }
   \let\thefootnote\relax\footnotetext{#3}
@@ -236,7 +235,7 @@
 %
 % \elrend - 'ELR' wordmark
 \newcommand{\elrend}{
-  \hfill {\footnotesize\bfseries\scshape ELR}
+  \hfill {\footnotesize\bfseries\scshape [ELR}
 }
 %
 % \fullpagefigure - A full-page figure with no margins
@@ -244,27 +243,33 @@
 \newcommand{\fullpagefigure}[1]{
   % hide page marks
   \pagestyle{empty}
-  % change the page layout. The lengths match the invocation of the
-  % 'geometry' package above.
-  \changepage{30mm}% increase textheight: 2 × marginwidth
-    {37mm}% increase textwidth: 2 × marginwidth + bindingoffset
-    {-15mm}% decrease odd (left) side margin: marginwidth
-    {-22mm}% decrease even (right) side margin: marginwidth + bindingoffset
-    {}% no change to columnsep
-    {-15mm}% decrease top margin: marginwidth
-    {-\baselineskip}% decrease headheight: one line
-    {-3mm}% decrease headsep to 0.
-    {}% no change to footskip
-  % include the figure itself
-  \begin{figure}[h]
-    \includegraphics[height=\paperheight]{#1}
-  \end{figure}
+%  % change the page layout. The lengths match the invocation of the
+%  % 'geometry' package above.
+%  \changepage{30mm}% increase textheight: 2 × marginwidth
+%    {37mm}% increase textwidth: 2 × marginwidth + bindingoffset
+%    {-15mm}% decrease odd (left) side margin: marginwidth
+%    {-22mm}% decrease even (right) side margin: marginwidth + bindingoffset
+%    {}% no change to columnsep
+%    {-15mm}% decrease top margin: marginwidth
+%    {-\baselineskip}% decrease headheight: one line
+%    {-3mm}% decrease headsep to 0.
+%    {}% no change to footskip
+%  % include the figure itself
+%  \begin{figure}[ht]
+    \begin{tikzpicture}[remember picture,overlay]
+      \coordinate (sw) at (current page.south west);
+      \clip (sw) rectangle (\paperwidth,\paperheight);
+      { [xshift=1in]
+        \node [anchor=south west,outer sep=0,inner sep=0pt] at (sw) {\includegraphics[height=\paperheight]{#1}};
+      }
+    \end{tikzpicture}
+%  \end{figure}
   % done with this page
   \clearpage
   % restore page marks
   \pagestyle{fancy}
-  % restore page layout. Numbers are the same as above, opposite sign
-  \changepage{-30mm}{-37mm}{15mm}{22mm}{}{15mm}{\baselineskip}{3mm}{}
+%  % restore page layout. Numbers are the same as above, opposite sign
+%  \changepage{-30mm}{-37mm}{15mm}{22mm}{}{15mm}{\baselineskip}{3mm}{}
 }
 %
 % \hcrulefill - Space-filling horizontal rule at text centreline
@@ -315,7 +320,7 @@
 \newcommand{\summary}[1]{
   \addtocontents{toc}{%
     \vspace{0.5\baselineskip}%
-    \protect\parbox{0.8\textwidth}{\small #1}%
+    \noindent\hspace*{2.1pc}\protect\parbox{0.8\textwidth}{\small #1}%
     \protect\par%
   }
 }
