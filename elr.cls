@@ -240,7 +240,7 @@
 %
 % \fullpagefigure - A full-page figure with no margins
 %   Use before \elrarticle to fill a blank left page.
-\newcommand{\fullpagefigure}[1]{
+\newcommand{\fullpagefigure}[2]{
   % hide page marks
   \pagestyle{empty}
 %  % change the page layout. The lengths match the invocation of the
@@ -263,6 +263,7 @@
         \node [anchor=south west,outer sep=0,inner sep=0pt] at (sw) {\includegraphics[height=\paperheight]{#1}};
       }
     \end{tikzpicture}
+    \label{#2}
 %  \end{figure}
   % done with this page
   \clearpage
