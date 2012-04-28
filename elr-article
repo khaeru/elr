@@ -1,30 +1,39 @@
 #!/bin/sh
-USAGE='Usage: elr-proof [ARTICLE]
+
+usage () {
+  cat << EOF
+Usage: `basename $0` [ARTICLE]
 Compile a PDF proof for the article with the name ARTICLE.
 
 The file ARTICLE.tex and any other files referenced from it must be in the
 current directory. The result is a PDF file named ARTICLE.pdf.
-'
+EOF
+  exit 1
+}
 
 # check arguments
-if [ $# -ne 1 ]
-then
-  echo "$USAGE"
-  exit 0
+if [ $# -ne 1 ] ; then
+  usage
 else
   SOURCE_FILE="$1.tex"
   TARGET_FILE="$1.pdf"
 fi
 
 # Check for existence of source and target files
-if [ ! -f "$SOURCE_FILE" ]
-then
+if [ ! -f "$SOURCE_FILE" ] ; then
   echo "Source file '${SOURCE_FILE}' not found."
-  exit 0
-elif [ -f "$TARGET_FILE" ]
-then
+  exit 1
+elif [ -f "$TARGET_FILE" ] ; then
   echo "Target file '${TARGET_FILE}' will be overwritten."
 fi
+
+if [ -f "$1-preamble.tex" ] ; then
+  echo "Found preamble file $1-preamble.tex."
+  PREAMBLE="\input{$1-preamble}"
+fi
+
+#OPTIONS="proof"
+OPTIONS=single
 
 # temporary directory for compilation
 TMP_DIR="tmp.$1"
@@ -34,26 +43,34 @@ PROOF_FILE="$1.proof.tex"
 PROOF="$1.proof.pdf"
 # paths for the current directory and the ELR LaTeX sources
 ELR_TEXPATH="`pwd`:`which $0 | xargs dirname`"
+export TEXINPUTS=$ELR_TEXPATH:$TEXINPUTS
+export BIBINPUTS=$ELR_TEXPATH:$BIBINPUTS
 
 # create and enter the temporary directory
 mkdir "$TMP_DIR"
 cd "$TMP_DIR"
 # create the LaTeX wrapper
 cat >"$PROOF_FILE" <<EOF
-\documentclass[proof]{elr}
+\batchmode
+\documentclass[$OPTIONS]{elr}
+$PREAMBLE
 \begin{document}
-  \include{$1}
-  \end{document}
+\include{$1}
+\end{document}
 EOF
 # compile
-rubber -dfs -n -1 -W all --texpath "$ELR_TEXPATH" "$PROOF_FILE"
+pdflatex $PROOF_FILE
+# 
+bibtex -terse bu1
+#
+pdflatex $PROOF_FILE
+pdflatex $PROOF_FILE
 # copy results
-if [ -f "$PROOF" ]
-then
+if [ -f "$PROOF" ] ; then
   mv "$PROOF" "../${TARGET_FILE}"
 fi
 # empty and remove temporary directory
 rm *
 cd ..
 rmdir $TMP_DIR
-
+xdg-open $TARGET_FILE

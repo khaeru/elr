@@ -1,8 +1,12 @@
 \NeedsTeXFormat{LaTeX2e}[1995/06/01]
-\ProvidesClass{elr}[2009/12/16 v1.00]
+\ProvidesClass{elr}[2012/01/23 v1.2]
 \newif\ifproof
 \DeclareOption{proof}{
   \prooftrue
+}
+\newif\ifsingle
+\DeclareOption{single}{
+  \singletrue
 }
 %% Remaining options to book class
 \DeclareOption*{
@@ -14,12 +18,21 @@
 \setcounter{tocdepth}{0}
 
 %% Package includes ———————————————————————————————————————————————————————————
+% …generally in alphabetical order.
+%
+% babel - multilingual support, hyphenation
+%\RequirePackage[canadian]{babel}
 %
 % calc - infix notation arithmetic in LaTeX
 \RequirePackage{calc}
 %
 % caption - customize captions of floating environments
-\RequirePackage[labelformat=empty,font={small,bf}]{caption}
+\RequirePackage[%
+  format=hang,%
+  font=small,%
+  labelfont=bf,%
+  labelsep=endash,%
+  ]{caption}
 %
 % chngpage/changepage - local changes to margins
 %   See \fullpagefigure. 'changepage' is the newer packagename, available in
@@ -29,7 +42,7 @@
 % charter - Bitstream charter fonts, and
 % lmodern - Latin modern fonts
 %   The package fontenc is required to get the proper encoding of these fonts
-\RequirePackage[T1]{fontenc}
+%\RequirePackage[T1]{fontenc}
 \RequirePackage{charter}
 \RequirePackage{lmodern}
   % default roman (serif) text is Bitstream Charter
@@ -39,28 +52,19 @@
   % not sure why this is necessary...
   \renewcommand{\bfdefault}{bx}
 %
-% hyperref - Hypertext marks in LaTeX
-%   All kinds of fancy stuff.
-\RequirePackage[%
-  pdftex,% because we compile with pdflatex
-  colorlinks,% ...instead of drawing a border around them.
-  citecolor=black,%
-  linkcolor=black,%
-  urlcolor=black,%
-  ]{hyperref}
-%
 % geometry - control page dimensions
 \RequirePackage[%
   includehead,%
   includefoot,%
-%% A5 format (unused)
-%  a5paper,
-%% lulu.com 'Pocketbook' format (unused)
+%% A5 format
+  a5paper,%
+%% OR: lulu.com 'Pocketbook' format (unused)
 %  paperwidth=4.25in,%
 %  paperheight=6.87in,%
-%% lulu.com 'Digest' (half-letter) format
-  paperwidth=5.5in,%
-  paperheight=8.5in,%
+%% OR: lulu.com 'Digest' (half-letter) format (unused)
+%  paperwidth=5.5in,%
+%  paperheight=8.5in,%
+  % margins
   margin=15mm,%
   bindingoffset=7mm,% larger margin on the binding side
   headsep=3mm,% separation between the header (see 'fancyhdr' below) and text
@@ -93,6 +97,10 @@
   \renewcommand{\headrulewidth}{0pt}
   % title page, colophon, etc. have no page marks at all
 %  \AtBeginDocument{\thispagestyle{plain}}
+%
+% hyphenat - to allow hyphenation in parts of cpompound words, e.g.
+%   design\hyp{}measure\hyp{}evaluate
+\RequirePackage{hyphenat}
 %
 %% inputenc - input encoding
 %%   Commented for the time being, because it interrupts processing when it
@@ -153,6 +161,49 @@
   }
 \fi
 %
+% TODO: move this someplace appropriate
+\RequirePackage{datetime}
+\ifsingle
+  \newtimeformat{elrtime}{\twodigit{\THEHOUR}}
+  \newdateformat{elrdate}{\twodigit{\THEDAY}~\monthname[\THEMONTH]~\THEYEAR}
+  \AtEndOfClass{
+    % set the headers and footers correctly
+    \issue{Engineering Leadership Review}{}{Preprint}
+    % parenthesize page numbers for preprints
+    \fancyfoot[LE,RO]{\bfseries (\thepage)}
+    \fancypagestyle{plain}{
+      \fancyhf{}
+      \fancyhead[L]{\includegraphics[height=3.5em]{images/logo}
+        \parbox[b]{0.8\textwidth}{
+          {\Large Engineering Leadership Review} \\
+          \textit{Preprints} @ \url{http://lot.utoronto.ca/elr} \\
+          \itshape Posted \settimeformat{elrtime}\currenttime \elrdate\today
+         }
+      }
+      \fancyfoot[C]{\bfseries (\thepage)}
+    }
+  }
+  % emulate the articles section of a full issue by enclosing the body in an
+  % article environment
+  \AtBeginDocument{
+    \mainmatter
+    \begin{articles}
+  }
+  \AtEndDocument{
+    \end{articles}
+  }
+\fi
+%
+% hyperref - Hypertext marks in LaTeX
+%   All kinds of fancy stuff. 'hyperref' is loaded last because numerous sources
+%   online indicate that this avoids weird errors.
+\RequirePackage[%
+  colorlinks,% ...instead of drawing a border around them.
+  citecolor=black,%
+  linkcolor=black,%
+  urlcolor=black,%
+  ]{hyperref}
+%
 %% Custom commands & environments —————————————————————————————————————————————
 %
 % \article - start a new article
@@ -194,7 +245,11 @@
     \noindent\hspace*{2.15pc}\protect\parbox{0.8\textwidth}{\itshape #1}%
     \protect\par%
   }
-  \let\thefootnote\relax\footnotetext{#3}
+  % temporarily suppress footnote numbering
+  { \renewcommand{\thefootnote}{}
+    % put the author credits in a footnote without any reference from the text
+    \footnotetext[0]{#3}
+  }
 }
 %
 % \ccby - Icons for the Creative Commons Attributon license.
@@ -263,7 +318,7 @@
         \node [anchor=south west,outer sep=0,inner sep=0pt] at (sw) {\includegraphics[height=\paperheight]{#1}};
       }
     \end{tikzpicture}
-    \label{#2}
+%    \label{#2}
 %  \end{figure}
   % done with this page
   \clearpage
@@ -288,8 +343,7 @@
   \fancyfoot[RE]{\small \textsc{#3}}
   \fancyfoot[LO]{\small \textsc{#1}}
   \fancypagestyle{plain}{
-    \fancyfoot{}
-    \fancyhead{}
+    \fancyhf{}
     \fancyfoot[C]{\bfseries \thepage}
   }
 }

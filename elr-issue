@@ -1,28 +1,29 @@
 #!/bin/sh
-USAGE='Usage: elr-issue [ISSUE]
+
+usage() {
+  cat << EOF
+Usage: `basename $0` [ISSUE]
 Compile a PDF version of the ELR issue [ISSUE]
 
 The file ISSUE.tex and any other files referenced from it must be in the
 current directory. The result is a PDF file named ISSUE.pdf.
-'
+EOF
+  exit 1
+}
 
 # check arguments
-if [ $# -ne 1 ]
-then
-  echo "$USAGE"
-  exit 0
+if [ $# -ne 1 ] ; then
+  usage
 else
   SOURCE_FILE="$1.tex"
   TARGET_FILE="$1.pdf"
 fi
 
 # Check for existence of source and target files
-if [ ! -f "$SOURCE_FILE" ]
-then
+if [ ! -f "$SOURCE_FILE" ] ; then
   echo "Source file '${SOURCE_FILE}' not found."
-  exit 0
-elif [ -f "$TARGET_FILE" ]
-then
+  exit 1
+elif [ -f "$TARGET_FILE" ] ; then
   echo "Target file '${TARGET_FILE}' will be overwritten."
 fi
 
